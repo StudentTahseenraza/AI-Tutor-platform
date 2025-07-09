@@ -105,7 +105,7 @@ const Home = () => {
     setIsExecuting(true);
     setError('');
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute` || 'https://ai-tutor-platform-1-u4lh.onrender.com/execute', {
         language,
         source: code,
         stdin: testCases || ''
@@ -122,7 +122,7 @@ const Home = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard` || 'https://ai-tutor-platform-1-u4lh.onrender.com/leaderboard');
       setLeaderboard(response.data);
     } catch (err) {
       console.warn('Failed to fetch leaderboard:', err);

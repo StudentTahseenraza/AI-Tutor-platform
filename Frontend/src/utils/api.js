@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Base URL from .env
 const API = axios.create({
-  baseURL: import.meta.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+  baseURL: import.meta.env.NEXT_PUBLIC_API_URL || 'https://ai-tutor-platform-1-u4lh.onrender.com/',
 });
 
 export const analyzeProblem = async (problem) => {
