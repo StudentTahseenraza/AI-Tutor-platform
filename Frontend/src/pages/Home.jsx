@@ -105,7 +105,7 @@ const Home = () => {
     setIsExecuting(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:8000/execute', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute`, {
         language,
         source: code,
         stdin: testCases || ''
@@ -122,7 +122,7 @@ const Home = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/leaderboard');
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard`);
       setLeaderboard(response.data);
     } catch (err) {
       console.warn('Failed to fetch leaderboard:', err);
@@ -191,7 +191,7 @@ const Home = () => {
                   isExecuting={isExecuting}
                   suggestions={suggestions}
                   setSuggestions={setSuggestions}
-                  theme={theme} // Pass theme prop
+                  theme={theme}
                 />
               </div>
               <div className="p-6 rounded-lg shadow-lg glass-effect">
@@ -215,6 +215,7 @@ const Home = () => {
           />
         ))}
       </div>
+      <Footer />
     </div>
   );
 };
