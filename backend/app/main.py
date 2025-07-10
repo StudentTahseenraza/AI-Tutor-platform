@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 # ✅ Configure Gemini API
-configure(api_key=os.getenv("GEMINI_API_KEY", "your-gemini-api-key-here"))
+configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = GenerativeModel("gemini-pro")
 
 # ✅ SQLite Setup
