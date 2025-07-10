@@ -14,14 +14,14 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://your-vercel-frontend-url", "http://localhost:3000"],  # Update with actual Vercel URL
+    allow_origins=["https://ai-tutor-platform-lac.vercel.app", "http://localhost:3000"],  # Update with actual Vercel URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Configure Gemini API
-configure(api_key=os.getenv("GEMINI_API_KEY", "your-gemini-api-key-here"))
+configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = GenerativeModel('gemini-pro')
 
 # Use in-memory SQLite for demo (non-persistent)
@@ -36,38 +36,19 @@ async def analyze_problem(data: dict):
     if not problem:
         raise HTTPException(status_code=400, detail="Problem is required")
     
-    # Basic logic to detect the problem and generate response
-    if "Find Minimum in Rotated Sorted Array" in problem:
-        math_explanation = """
-        To find the minimum in a rotated sorted array with duplicates, we use a modified binary search. 
-        The array is originally sorted, and rotation creates a pivot point where the minimum element lies. 
-        Due to duplicates, we compare the middle element with the rightmost element. If they are equal, 
-        we cannot determine which half is sorted, so we reduce the search space by one element from the right. 
-        Otherwise, if mid > right, the minimum is in the right half; if mid < right, it's in the left half.
-        Time complexity is O(n) in worst case due to duplicates, though O(log n) when no duplicates.
-        """
-        pseudo_code = """
-        function findMin(nums):
-            left = 0
-            right = nums.length - 1
-            while left < right:
-                mid = left + (right - left) // 2
-                if nums[mid] > nums[right]:
-                    left = mid + 1
-                elif nums[mid] < nums[right]:
-                    right = mid
-                else:
-                    right = right - 1
-            return nums[left]
-        """
-    else:
-        math_explanation = f"Explanation for {problem} (generic response)"
-        pseudo_code = f"Pseudo code for {problem} (generic response)"
-
-    return {
-        "mathExplanation": math_explanation.strip(),
-        "pseudoCode": pseudo_code.strip()
-    }
+    try:
+        # Prompt Gemini to generate mathematical explanation and pseudocode
+        response = model.generate_content(
+            f"Provide a concise mathematical explanation and pseudocode for solving the coding problem: {problem}. "
+            f"Return the response as a JSON object with 'mathExplanation' and 'pseudoCode' fields. "
+            f"Ensure the explanation includes the time and space complexity, and the pseudocode is clear and structured."
+        )
+        result = json.loads(response.text)
+        if not all(key in result for key in ['mathExplanation', 'pseudoCode']):
+            raise ValueError("Invalid response format from AI model")
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to analyze problem: {str(e)}")
 
 @app.post("/execute")
 async def execute_code(data: dict):
@@ -90,7 +71,11 @@ async def generate_tutorial(data: dict):
     if not problem:
         raise HTTPException(status_code=400, detail="Problem is required")
     try:
-        response = model.generate_content(f"Generate a step-by-step tutorial for solving the coding problem: {problem}. Provide 3-5 steps with text descriptions and corresponding Python code snippets where applicable. Return as a JSON array of objects, each with 'text' and optional 'code' fields, and include the problem in the first object's 'problem' field.")
+        response = model.generate_content(
+            f"Generate a step-by-step tutorial for solving the coding problem: {problem}. "
+            f"Provide 3-5 steps with text descriptions and corresponding Python code snippets where applicable. "
+            f"Return as a JSON array of objects, each with 'text' and optional 'code' fields, and include the problem in the first object's 'problem' field."
+        )
         tutorial = json.loads(response.text)
         if not isinstance(tutorial, list) or not all('text' in step for step in tutorial):
             raise ValueError("Invalid tutorial format")
