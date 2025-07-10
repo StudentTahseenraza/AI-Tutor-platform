@@ -2,8 +2,9 @@ import axios from 'axios';
 
 // Base URL from .env
 const API = axios.create({
-  baseURL: import.meta.env.NEXT_PUBLIC_API_URL || 'https://ai-tutor-platform-1-u4lh.onrender.com/',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://ai-tutor-platform-1-0pax.onrender.com',
 });
+
 
 export const analyzeProblem = async (problem) => {
   try {

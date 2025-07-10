@@ -26,6 +26,8 @@ const Home = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [tutorialSteps, setTutorialSteps] = useState([]);
 
+  const BASE_URL= import.meta.env.VITE_API_BASE_URL || 'https://ai-tutor-platform-1-0pax.onrender.com/';
+
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
@@ -105,7 +107,7 @@ const Home = () => {
     setIsExecuting(true);
     setError('');
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/execute` || 'https://ai-tutor-platform-1-u4lh.onrender.com/execute', {
+      const response = await axios.post(`${BASE_URL}/execute`, {
         language,
         source: code,
         stdin: testCases || ''
@@ -122,7 +124,7 @@ const Home = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard` || 'https://ai-tutor-platform-1-u4lh.onrender.com/leaderboard');
+      const response = await axios.get(`${BASE_URL}/leaderboard`);
       setLeaderboard(response.data);
     } catch (err) {
       console.warn('Failed to fetch leaderboard:', err);
