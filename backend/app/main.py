@@ -14,7 +14,7 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ai-tutor-platform-lac.vercel.app", "http://localhost:3000"],  # Update with actual Vercel URL
+    allow_origins=["https://ai-tutor-platform-cbdmps8vo-tahseen-razas-projects.vercel.app", "http://localhost:3000"],  # Update with actual Vercel URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
