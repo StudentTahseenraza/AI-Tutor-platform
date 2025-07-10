@@ -14,7 +14,7 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ai-tutor-platform-m75c-an1oqpiu5-tahseen-razas-projects.vercel.app/", "http://localhost:3000"],  # Allow frontend origin
+    allow_origins=["http://localhost:3000"],  # Allow frontend origin
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods
     allow_headers=["*"],  # Allow all headers
