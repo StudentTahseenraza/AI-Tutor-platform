@@ -5,9 +5,8 @@ import PseudoCode from '../components/PseudoCode';
 import OutputDisplay from '../components/OutputDisplay';
 import CodeEditor from '../components/CodeEditor';
 import ErrorBoundary from '../components/ErrorBoundary';
-import Tutorial from '../components/Tutorial';
 import Leaderboard from '../components/Leaderboard';
-import { analyzeProblem, suggestCode, generateTutorial } from '../utils/api';
+import { analyzeProblem, suggestCode } from '../utils/api';
 import axios from 'axios';
 
 const Home = () => {
@@ -20,13 +19,9 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
-  const [showTutorial, setShowTutorial] = useState(false);
   const [points, setPoints] = useState(() => parseInt(localStorage.getItem('points')) || 0);
   const [leaderboard, setLeaderboard] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-  const [tutorialSteps, setTutorialSteps] = useState([]);
-
-  const BASE_URL= import.meta.env.VITE_API_BASE_URL || 'https://ai-tutor-platform-1-0pax.onrender.com/';
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -62,31 +57,25 @@ const Home = () => {
         setError('Please enter a problem to analyze.');
         return;
       }
+
       const cachedResponse = getCachedResponse(problem);
       if (cachedResponse) {
         setMathExplanation(cachedResponse.mathExplanation);
         setPseudoCode(cachedResponse.pseudoCode);
         setOutput('Loaded from cache.');
         setError('');
-        try {
-          const tutorial = await generateTutorial(problem);
-          setTutorialSteps(tutorial.steps);
-        } catch (err) {
-          console.warn('Failed to generate tutorial:', err);
-        }
         return;
       }
+
       setIsLoading(true);
       setError('');
       try {
         const response = await analyzeProblem(problem);
-        setMathExplanation(response.mathExplanation);
-        setPseudoCode(response.pseudoCode);
+        setMathExplanation(response.mathExplanation || 'No explanation available');
+        setPseudoCode(response.pseudoCode || 'No pseudocode available');
         setOutput('Analysis complete.');
         setCachedResponse(problem, response);
         setPoints(prev => prev + 5);
-        const tutorial = await generateTutorial(problem);
-        setTutorialSteps(tutorial.steps);
       } catch (err) {
         setError(err.message || 'An error occurred.');
         setMathExplanation('');
@@ -95,7 +84,7 @@ const Home = () => {
       } finally {
         setIsLoading(false);
       }
-    }, 1000),
+    }, 3000),
     [problem]
   );
 
@@ -107,7 +96,7 @@ const Home = () => {
     setIsExecuting(true);
     setError('');
     try {
-      const response = await axios.post(`${BASE_URL}/execute`, {
+      const response = await axios.post('http://localhost:8000/execute', {
         language,
         source: code,
         stdin: testCases || ''
@@ -124,8 +113,8 @@ const Home = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/leaderboard`);
-      setLeaderboard(response.data);
+      const response = await axios.get('http://localhost:8000/leaderboard');
+      setLeaderboard(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.warn('Failed to fetch leaderboard:', err);
       setLeaderboard([{ name: 'user', score: points }]);
@@ -134,7 +123,6 @@ const Home = () => {
 
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   const clearError = () => setError('');
-  const handleTutorialComplete = () => setShowTutorial(false);
 
   return (
     <div className="min-h-screen text-gray-900 bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 dark:text-gray-100">
@@ -142,7 +130,7 @@ const Home = () => {
         <div className="container p-4 mx-auto">
           <div className="flex items-center justify-between p-4 rounded-lg shadow-lg glass-effect">
             <div className="flex items-center">
-              <img src="/src/assets/logo.webp" alt="CodeFlow Tutor Logo" className="mr-4 logo" />
+              <img src="../assets/logo.png" alt="CodeFlow Tutor Logo" className="mr-4 logo" />
               <h1 className="text-3xl font-bold">CodeFlow Tutor</h1>
             </div>
             <button
@@ -160,7 +148,6 @@ const Home = () => {
             <section className="p-6 text-center rounded-lg shadow-lg glass-effect">
               <h2 className="mb-4 text-4xl font-bold">Welcome to CodeFlow Tutor</h2>
               <p className="mb-6 text-lg">Accelerate your coding journey with AI-powered tools!</p>
-              <button onClick={() => setShowTutorial(true)} className="px-4 py-2 text-white bg-blue-500 rounded">Start Tutorial</button>
             </section>
             <section className="p-6 rounded-lg shadow-lg glass-effect">
               <h2 className="mb-4 text-2xl font-semibold">Leaderboard</h2>
@@ -202,20 +189,6 @@ const Home = () => {
             </div>
           </div>
         </ErrorBoundary>
-      </div>
-      {showTutorial && <Tutorial steps={tutorialSteps} onComplete={handleTutorialComplete} />}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-blue-400 rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}vw`,
-              top: `${Math.random() * 100}vh`,
-              animationDelay: `${Math.random() * 5}s`,
-            }}
-          />
-        ))}
       </div>
     </div>
   );

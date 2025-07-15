@@ -1,32 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Copy } from 'lucide-react';
 
 const OutputDisplay = ({ output }) => {
-  const handleVoiceOutput = () => {
-    if (!window.speechSynthesis) {
-      console.warn('Speech synthesis not supported in this browser.');
-      return;
-    }
-    const utterance = new SpeechSynthesisUtterance(output || 'No output available.');
-    utterance.lang = 'en-US';
-    utterance.onend = () => console.log('Speech synthesis completed.');
-    utterance.onerror = (event) => console.warn('Speech synthesis error:', event.error);
-    window.speechSynthesis.speak(utterance);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(output || '');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="output-section">
-      <pre className="p-2 rounded">{output || 'No output yet...'}</pre>
-      <button
-        onClick={handleVoiceOutput}
-        className="px-4 py-2 mt-2 text-white bg-purple-500 rounded"
-      >
-        🔊 Hear Output
-      </button>
+    <div className="relative p-4 bg-white rounded-lg shadow-md dark:bg-gray-900">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-100">📤 Output</h2>
+        <button
+          onClick={handleCopy}
+          className="flex items-center px-3 py-1 text-sm text-white transition bg-blue-600 rounded hover:bg-blue-700"
+        >
+          <Copy size={16} className="mr-1" />
+          {copied ? 'Copied!' : 'Copy'}
+        </button>
+      </div>
+
+      <pre className="p-3 overflow-auto text-sm text-gray-800 whitespace-pre-wrap bg-gray-100 rounded-md dark:bg-gray-800 dark:text-gray-100 max-h-60">
+        {output ? output : 'No output yet.'}
+      </pre>
     </div>
   );
 };
 
-OutputDisplay.propTypes = { output: PropTypes.string };
+OutputDisplay.propTypes = {
+  output: PropTypes.string.isRequired
+};
 
 export default OutputDisplay;
