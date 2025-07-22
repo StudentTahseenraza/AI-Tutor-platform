@@ -45,7 +45,7 @@ def call_gemma_api(prompt, max_tokens=800, retries=1):
         "X-Title": "AI-Tutor"
     }
     payload = {
-        "model": "google/gemma-3n-e2b-it:free",
+        "model": "mistralai/mistral-small-3.2-24b-instruct:free",
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": max_tokens,
         "temperature": 0.6,
@@ -201,7 +201,7 @@ async def get_leaderboard():
 # ✅ /list-models route
 @app.get("/list-models")
 async def list_models():
-    return {"models": ["google/gemma-3n-e2b-it:free"]}
+    return {"models": ["mistralai/mistral-small-3.2-24b-instruct:free"]}
 
 # ✅ Run
 if __name__ == "__main__":
