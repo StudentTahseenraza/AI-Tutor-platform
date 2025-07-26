@@ -11,6 +11,7 @@ import requests
 import os
 import re
 from dotenv import load_dotenv
+import uvicorn
 
 load_dotenv()
 
@@ -205,5 +206,4 @@ async def list_models():
 
 # ✅ Run
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
