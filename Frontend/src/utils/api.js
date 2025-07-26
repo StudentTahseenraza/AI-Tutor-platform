@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Base URL from .env, defaults to localhost for local development
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
-  timeout: 30000, // 30-second timeout
+  baseURL: 'https://ai-tutor-platform-z5u9.onrender.com',
+  timeout: 30000,
 });
 
 const retryRequest = async (fn, maxRetries = 2, delay = 1000) => {

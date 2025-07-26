@@ -96,7 +96,7 @@ const Home = () => {
     setIsExecuting(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:8000/execute', {
+      const response = await axios.post('https://ai-tutor-platform-z5u9.onrender.com/execute', {
         language,
         source: code,
         stdin: testCases || ''
@@ -113,7 +113,7 @@ const Home = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/leaderboard');
+      const response = await axios.get('https://ai-tutor-platform-z5u9.onrender.com/leaderboard');
       setLeaderboard(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.warn('Failed to fetch leaderboard:', err);
