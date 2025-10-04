@@ -2,6 +2,11 @@
 
 Welcome to **AI-Tutor**, an innovative web-based platform designed to transform the learning experience in coding and mathematics. It leverages powerful AI models to offer real-time code explanations, flowchart visualizations, intelligent code refactoring, and mathematical insight generation—all in a sleek and interactive user interface.
 
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/b8bd0ee6-6d62-40f5-949a-bbaaa36a9609" />
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/7310f67b-9d63-4b9d-876d-fff712bdd217" />
+
+
+
 ---
 
 ## 📚 Table of Contents
@@ -122,6 +127,7 @@ Welcome to **AI-Tutor**, an innovative web-based platform designed to transform 
 
    Run frontend
    npm run dev
+
 
 
 
