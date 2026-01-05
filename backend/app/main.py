@@ -48,8 +48,8 @@ app.db.commit()
 # =========================
 # OpenRouter Models
 # =========================
-PRIMARY_MODEL = "google/gemma-3n-e2b-it:free"
-FALLBACK_MODEL = "mistralai/mistral-small-3.2-24b-instruct:free"
+PRIMARY_MODEL = "mistralai/mistral-7b-instruct:free"
+FALLBACK_MODEL = None
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -72,15 +72,16 @@ def call_llm(prompt: str, max_tokens: int = 800, retries: int = 1) -> str:
 
     for model in models_to_try:
         payload = {
-            "model": model,
+            "model": "mistralai/mistral-7b-instruct:free",
             "messages": [
-                {"role": "system", "content": "You are an expert computer science tutor."},
-                {"role": "user", "content": prompt}
+            {"role": "system", "content": "You are an expert computer science tutor."},
+            {"role": "user", "content": prompt}
             ],
             "max_tokens": max_tokens,
             "temperature": 0.6,
             "top_p": 0.9
         }
+
 
         for attempt in range(retries + 1):
             try:
